@@ -19,6 +19,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 setupSwagger(app);
 
+app.get("/", (req, res) => {
+  res.redirect("/api-docs");
+});
+
 // MongoDB connect
 mongoose
   .connect(process.env.MONGO_URI)
