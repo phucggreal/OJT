@@ -1,0 +1,32 @@
+{
+  "name": "jwt-auth-demo",
+  "version": "1.0.0",
+  "description": "JWT Authentication demo with Node.js, Express, and MongoDB",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "jwt",
+    "authentication",
+    "mongodb"
+  ],
+  "author": "PhucGG",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.1",
+    "nodemailer": "^6.9.14"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
