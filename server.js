@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import { setupSwagger } from "./swagger.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
+setupSwagger(app);
 
 // MongoDB connect
 mongoose
