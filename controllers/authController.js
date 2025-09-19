@@ -1,4 +1,23 @@
 /**
+ * UPDATE PROFILE
+ * Cho phép user cập nhật username, avatar (link ảnh)
+ * Yêu cầu xác thực qua JWT
+ */
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { username, avatar } = req.body;
+    const updates = {};
+    if (username) updates.username = username;
+    if (avatar) updates.avatar = avatar;
+    const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    return res.json({ message: "Profile updated", user });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+/**
  * LOGOUT
  */
 const logout = async (req, res) => {
@@ -276,5 +295,6 @@ export {
   verifyResetOTP,
   resetPassword,
   refreshToken,
-  logout
+  logout,
+  updateProfile
 };

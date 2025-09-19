@@ -9,8 +9,34 @@ import {
   verifyResetOTP,
   resetPassword,
   refreshToken,
-  logout
+  logout,
+  updateProfile
 } from "../controllers/authController.js";
+/**
+ * @swagger
+ * /api/auth/update-profile:
+ *   patch:
+ *     summary: Cập nhật thông tin cá nhân (username, avatar)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               avatar:
+ *                 type: string
+ *                 description: Link ảnh đại diện
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ */
+router.patch("/update-profile", authMiddleware, updateProfile);
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();

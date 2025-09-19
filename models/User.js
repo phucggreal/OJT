@@ -11,7 +11,8 @@ const userSchema = new mongoose.Schema({
   resetVerified: { type: Boolean, default: false },
   refreshToken: { type: String, default: null },
   lastOtpSent: { type: Date, default: null },
-  isDeleted: { type: Boolean, default: false }
+  isDeleted: { type: Boolean, default: false },
+  avatar: { type: String, default: null } // link ảnh đại diện
 }, { timestamps: true });
 
 userSchema.index({ username: "text", email: "text" });
