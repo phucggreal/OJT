@@ -10,8 +10,87 @@ import {
   resetPassword,
   refreshToken,
   logout,
-  updateProfile
+  updateProfile,
+  changePassword,
+  changeEmailOTP,
+  verifyChangeEmail
 } from "../controllers/authController.js";
+
+import authMiddleware from "../middleware/authMiddleware.js";
+
+const router = express.Router();
+
+/**
+ * @swagger
+ * /api/auth/change-password:
+ *   post:
+ *     summary: Đổi mật khẩu bằng mật khẩu cũ
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Đổi mật khẩu thành công
+ */
+router.post("/change-password", authMiddleware, changePassword);
+
+/**
+ * @swagger
+ * /api/auth/change-email-otp:
+ *   post:
+ *     summary: Đổi email, gửi OTP xác thực email mới
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newEmail:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP đã gửi tới email mới
+ */
+router.post("/change-email-otp", authMiddleware, changeEmailOTP);
+
+/**
+ * @swagger
+ * /api/auth/verify-change-email:
+ *   post:
+ *     summary: Xác thực OTP để đổi email
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Đổi email thành công
+ */
+router.post("/verify-change-email", authMiddleware, verifyChangeEmail);
+
 /**
  * @swagger
  * /api/auth/update-profile:
@@ -37,10 +116,6 @@ import {
  *         description: Cập nhật thành công
  */
 router.patch("/update-profile", authMiddleware, updateProfile);
-import authMiddleware from "../middleware/authMiddleware.js";
-
-const router = express.Router();
-
 /**
  * @swagger
  * /api/auth/register:

@@ -12,7 +12,8 @@ const userSchema = new mongoose.Schema({
   refreshToken: { type: String, default: null },
   lastOtpSent: { type: Date, default: null },
   isDeleted: { type: Boolean, default: false },
-  avatar: { type: String, default: null } // link ảnh đại diện
+  avatar: { type: String, default: null }, // link ảnh đại diện
+  tempEmail: { type: String, default: null } // email tạm khi đổi email
 }, { timestamps: true });
 
 userSchema.index({ username: "text", email: "text" });

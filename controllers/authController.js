@@ -1,4 +1,82 @@
 /**
+ * VERIFY CHANGE EMAIL
+ * Xác thực OTP để đổi email
+ * Yêu cầu xác thực qua JWT
+ */
+const verifyChangeEmail = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { otp } = req.body;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user.tempEmail) return res.status(400).json({ message: "No email change requested" });
+    if (user.otpCode !== otp || user.otpExpires < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+    user.email = user.tempEmail;
+    user.tempEmail = undefined;
+    user.otpCode = null;
+    user.otpExpires = null;
+    await user.save();
+    return res.json({ message: "Email changed successfully" });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+/**
+ * CHANGE EMAIL OTP
+ * Đổi email, gửi OTP xác thực email mới
+ * Yêu cầu xác thực qua JWT
+ */
+const changeEmailOTP = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { newEmail } = req.body;
+    if (!newEmail) return res.status(400).json({ message: "New email required" });
+    const emailExists = await User.findOne({ email: newEmail });
+    if (emailExists) return res.status(400).json({ message: "Email already exists" });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+    await User.findByIdAndUpdate(userId, {
+      otpCode: otp,
+      otpExpires,
+      tempEmail: newEmail,
+    });
+    // Gửi OTP tới email mới
+    await sendEmail({
+      to: newEmail,
+      subject: "Verify your new email",
+      html: `<h2>Your OTP code: ${otp}</h2>`
+    });
+    return res.json({ message: "OTP sent to new email. Please verify." });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+/**
+ * CHANGE PASSWORD
+ * Đổi mật khẩu bằng cách nhập mật khẩu cũ và mật khẩu mới
+ * Yêu cầu xác thực qua JWT
+ */
+const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Current password incorrect" });
+    if (await bcrypt.compare(newPassword, user.password)) {
+      return res.status(400).json({ message: "New password must be different" });
+    }
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    return res.json({ message: "Password changed successfully" });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+/**
  * UPDATE PROFILE
  * Cho phép user cập nhật username, avatar (link ảnh)
  * Yêu cầu xác thực qua JWT
@@ -296,5 +374,8 @@ export {
   resetPassword,
   refreshToken,
   logout,
-  updateProfile
+  updateProfile,
+  changePassword,
+  changeEmailOTP,
+  verifyChangeEmail
 };
